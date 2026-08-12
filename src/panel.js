@@ -11,11 +11,10 @@
     arm: { el: document.getElementById("arm"), out: document.getElementById("arm-value") },
     size: { el: document.getElementById("size"), out: document.getElementById("size-value") },
     opacity: { el: document.getElementById("opacity"), out: document.getElementById("opacity-value") },
-    shake: { el: document.getElementById("shake"), out: document.getElementById("shake-value") },
     flash: { el: document.getElementById("flash"), out: document.getElementById("flash-value") }
   };
 
-  const DEFAULTS = { speed: 92, arm: 100, size: 100, opacity: 100, shake: 2, flash: 100 };
+  const DEFAULTS = { speed: 92, arm: 100, size: 100, opacity: 100, flash: 100 };
 
   const toggle = document.getElementById("toggle");
   const reset = document.getElementById("reset");
@@ -27,7 +26,6 @@
       arm: Number(sliders.arm.el.value),
       size: Number(sliders.size.el.value),
       opacity: Number(sliders.opacity.el.value),
-      shake: Number(sliders.shake.el.value),
       flash: Number(sliders.flash.el.value)
     };
   }
@@ -37,7 +35,6 @@
     sliders.arm.out.textContent = values.arm + "%";
     sliders.size.out.textContent = values.size + "%";
     sliders.opacity.out.textContent = values.opacity + "%";
-    sliders.shake.out.textContent = values.shake === 0 ? "off" : values.shake + " px";
     sliders.flash.out.textContent = values.flash + "%";
   }
 
@@ -53,7 +50,6 @@
       opacity: values.opacity / 100,
       flashScale: values.flash / 100
     });
-    invoke("set_shake", { pixels: values.shake });
   }
 
   function restore() {

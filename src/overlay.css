@@ -1,7 +1,7 @@
 /* Geometry, keyframes and flash timings are copied verbatim from the pokey demo
    (reference/pokey_cursor_fast_hold_fx_shake.html) so the desktop hand matches the
-   web one frame for frame. Only the page chrome and the CSS-driven screen shake are
-   gone: there is no page here, and the real desktop is shaken from Rust instead. */
+   web one frame for frame. Only the page chrome and its screen shake are gone: there
+   is no page here to shake. */
 
 * {
   box-sizing: border-box;

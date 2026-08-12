@@ -6,7 +6,6 @@
   "use strict";
 
   const { listen } = window.__TAURI__.event;
-  const { invoke } = window.__TAURI__.core;
 
   const root = document.documentElement;
   const cursor = document.getElementById("hero-cursor");
@@ -131,8 +130,6 @@
     pointer.getBoundingClientRect();
     pointer.style.animation = `poke-hold-fast ${holdSpeed}ms linear infinite`;
 
-    invoke("set_hold", { on: true });
-
     fastHoldImpactFx();
     clearInterval(holdFxTimer);
     holdFxTimer = setInterval(fastHoldImpactFx, holdSpeed);
@@ -146,7 +143,6 @@
 
     if (!holdActive) return;
     holdActive = false;
-    invoke("set_hold", { on: false });
     pointer.style.animation = "none";
     pointer.getBoundingClientRect();
   }
@@ -167,7 +163,7 @@
   listen("vc:move", (event) => moveCursor(event.payload.x, event.payload.y));
 
   // A click only pokes. Dragging has to stay usable, so nothing here starts the
-  // machine gun or shakes the desktop.
+  // machine gun.
   listen("vc:down", () => triggerVisualHit());
 
   // Ctrl is the machine-gun trigger. The 150 ms delay keeps ordinary shortcuts

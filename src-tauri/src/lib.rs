@@ -1,6 +1,6 @@
 mod cursor;
+mod fullscreen;
 mod hook;
-mod shake;
 
 use std::sync::atomic::{AtomicBool, AtomicI32, AtomicU32, Ordering};
 use std::sync::mpsc;
@@ -22,7 +22,12 @@ const PANEL: &str = "panel";
 /// Pointer updates are coalesced to this interval; the hook itself can fire far faster.
 const MOVE_INTERVAL: Duration = Duration::from_millis(6);
 
+/// How often the full-screen guard re-checks the foreground window.
+const GUARD_INTERVAL: Duration = Duration::from_millis(250);
+
 static RUNNING: AtomicBool = AtomicBool::new(false);
+/// True while a full-screen window forced the plain cursor back.
+static SUSPENDED: AtomicBool = AtomicBool::new(false);
 static ORIGIN_X: AtomicI32 = AtomicI32::new(0);
 static ORIGIN_Y: AtomicI32 = AtomicI32::new(0);
 static SCALE: AtomicU32 = AtomicU32::new(1.0f32.to_bits());
@@ -91,22 +96,41 @@ fn stop(app: AppHandle) {
     }
 }
 
-#[tauri::command]
-fn set_hold(on: bool) {
-    if RUNNING.load(Ordering::Relaxed) {
-        shake::hold(on);
-    }
-}
-
-#[tauri::command]
-fn set_shake(pixels: f32) {
-    shake::set_amplitude(pixels);
-}
-
 fn shut_down_effects() {
     RUNNING.store(false, Ordering::SeqCst);
-    shake::hold(false);
+    SUSPENDED.store(false, Ordering::SeqCst);
     cursor::restore();
+}
+
+/// Gives the plain cursor back while a full-screen window sits above the overlay,
+/// otherwise there would be no visible pointer at all in games or the PrintScreen
+/// snipping overlay.
+fn guard_visibility(app: AppHandle) {
+    loop {
+        std::thread::sleep(GUARD_INTERVAL);
+
+        if !RUNNING.load(Ordering::Relaxed) {
+            SUSPENDED.store(false, Ordering::Relaxed);
+            continue;
+        }
+
+        let covered = fullscreen::foreground_covers_monitor();
+        if covered == SUSPENDED.load(Ordering::Relaxed) {
+            continue;
+        }
+        SUSPENDED.store(covered, Ordering::Relaxed);
+
+        let Some(overlay) = app.get_webview_window(OVERLAY) else {
+            continue;
+        };
+        if covered {
+            cursor::restore();
+            let _ = overlay.hide();
+        } else {
+            let _ = overlay.show();
+            cursor::hide();
+        }
+    }
 }
 
 fn pump_pointer(app: AppHandle, events: mpsc::Receiver<hook::Event>) {
@@ -130,7 +154,6 @@ fn pump_pointer(app: AppHandle, events: mpsc::Receiver<hook::Event>) {
             }
             Ok(hook::Event::CtrlUp) => {
                 ctrl_held = false;
-                shake::hold(false);
                 if RUNNING.load(Ordering::Relaxed) {
                     let _ = app.emit_to(OVERLAY, "vc:ctrl-up", ());
                 }
@@ -164,12 +187,11 @@ pub fn run() {
     let previous_hook = std::panic::take_hook();
     std::panic::set_hook(Box::new(move |info| {
         shut_down_effects();
-        shake::shutdown();
         previous_hook(info);
     }));
 
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![start, stop, set_hold, set_shake])
+        .invoke_handler(tauri::generate_handler![start, stop])
         .setup(|app| {
             cursor::force_restore();
 
@@ -199,13 +221,15 @@ pub fn run() {
 
             let handle = app.handle().clone();
             std::thread::spawn(move || pump_pointer(handle, receiver));
+
+            let guard = app.handle().clone();
+            std::thread::spawn(move || guard_visibility(guard));
             Ok(())
         })
         .on_window_event(|window, event| {
             if window.label() == PANEL {
                 if let WindowEvent::CloseRequested { .. } = event {
                     shut_down_effects();
-                    shake::shutdown();
                     window.app_handle().exit(0);
                 }
             }
@@ -215,7 +239,6 @@ pub fn run() {
         .run(|_app, event| {
             if let tauri::RunEvent::Exit = event {
                 shut_down_effects();
-                shake::shutdown();
             }
         });
 }
