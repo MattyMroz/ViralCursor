@@ -15,7 +15,10 @@
     flash: { el: document.getElementById("flash"), out: document.getElementById("flash-value") }
   };
 
+  const DEFAULTS = { speed: 92, arm: 100, size: 100, opacity: 100, shake: 2, flash: 100 };
+
   const toggle = document.getElementById("toggle");
+  const reset = document.getElementById("reset");
   let running = false;
 
   function read() {
@@ -83,6 +86,13 @@
     setRunning(true);
     // The overlay webview is created fresh on first run; resend once it can listen.
     setTimeout(push, 120);
+  });
+
+  reset.addEventListener("click", () => {
+    for (const [key, value] of Object.entries(DEFAULTS)) {
+      sliders[key].el.value = String(value);
+    }
+    push();
   });
 
   for (const slider of Object.values(sliders)) {

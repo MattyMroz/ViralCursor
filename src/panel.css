@@ -94,6 +94,30 @@ input[type="range"]:focus-visible {
   outline-offset: 6px;
 }
 
+.reset {
+  align-self: flex-end;
+  margin-top: 2px;
+  padding: 4px 0;
+  border: none;
+  background: none;
+  color: #111;
+  font: 700 10px/1 Arial, Helvetica, sans-serif;
+  letter-spacing: .16em;
+  opacity: .35;
+  cursor: pointer;
+  transition: opacity .12s ease;
+}
+
+.reset:hover {
+  opacity: .8;
+}
+
+.reset:focus-visible {
+  outline: 2px solid #111;
+  outline-offset: 4px;
+  opacity: .8;
+}
+
 .foot {
   display: flex;
   flex-direction: column;
