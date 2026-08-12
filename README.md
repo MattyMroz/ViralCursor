@@ -7,9 +7,7 @@ Hold Ctrl and it turns into a machine gun.
 <img src="assets/panel.png" alt="The control panel with the hand mid-poke" width="420">
 
 The hand is drawn over everything, on every monitor, and keeps a white outline so it
-stays readable on a dark desktop:
-
-![The hand poking over an editor](assets/in-action.png)
+stays readable on a dark desktop.
 
 ## What it does
 
