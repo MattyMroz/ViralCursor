@@ -4,7 +4,7 @@ Your Windows cursor becomes the giant poking hand from the
 [pokey](reference/pokey_cursor_fast_hold_fx_shake.html) demo. Click and it pokes.
 Hold Ctrl and it turns into a machine gun.
 
-<img src="assets/panel.png" alt="The control panel with the hand mid-poke" width="420">
+<img src="assets/demo.webp" alt="Starting ViralCursor and poking the screen" width="420">
 
 The hand is drawn over everything, on every monitor, and keeps a white outline so it
 stays readable on a dark desktop.
