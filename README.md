@@ -36,18 +36,18 @@ the window is buried, which matters: hiding the cursor is a system-wide change.
 
 ## Build
 
-Needs [Rust](https://rustup.rs) and Node.
+Needs [Rust](https://rustup.rs) and [Bun](https://bun.sh).
 
 ```bash
-npm install
-npm run build     # -> src-tauri/target/release/ViralCursor.exe
-npm run dev       # run without packaging
+bun install
+bun run build     # -> src-tauri/target/release/ViralCursor.exe
+bun run dev       # run without packaging
 ```
 
 Regenerating the icon from the demo's SVG:
 
 ```bash
-node tools/build-icon.mjs && npx tauri icon icon.png
+bun tools/build-icon.mjs && bunx tauri icon icon.png
 ```
 
 ## How it works
