@@ -1,0 +1,15 @@
+{
+  "name": "viralcursor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Turns your Windows cursor into the giant poking hand.",
+  "scripts": {
+    "dev": "tauri dev",
+    "build": "tauri build",
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "sharp": "^0.35.3"
+  }
+}

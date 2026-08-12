@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ViralCursor</title>
+<link rel="stylesheet" href="panel.css">
+</head>
+<body>
+  <header class="head">
+    <h1>ViralCursor</h1>
+    <p class="sub">CLICK LIKE YOU MEAN IT.</p>
+  </header>
+
+  <main class="controls">
+    <label class="row" for="speed">
+      <span class="name">Click speed</span>
+      <span class="value" id="speed-value">10.9 / s</span>
+      <input type="range" id="speed" min="40" max="260" step="2" value="92">
+    </label>
+
+    <label class="row" for="arm">
+      <span class="name">Arm length</span>
+      <span class="value" id="arm-value">100%</span>
+      <input type="range" id="arm" min="30" max="250" step="5" value="100">
+    </label>
+
+    <label class="row" for="size">
+      <span class="name">Hand size</span>
+      <span class="value" id="size-value">100%</span>
+      <input type="range" id="size" min="50" max="220" step="5" value="100">
+    </label>
+
+    <label class="row" for="opacity">
+      <span class="name">Opacity</span>
+      <span class="value" id="opacity-value">100%</span>
+      <input type="range" id="opacity" min="15" max="100" step="5" value="100">
+    </label>
+
+    <label class="row" for="shake">
+      <span class="name">Screen shake</span>
+      <span class="value" id="shake-value">2 px</span>
+      <input type="range" id="shake" min="0" max="14" step="1" value="2">
+    </label>
+
+    <label class="row" for="flash">
+      <span class="name">Impact size</span>
+      <span class="value" id="flash-value">100%</span>
+      <input type="range" id="flash" min="50" max="200" step="5" value="100">
+    </label>
+  </main>
+
+  <footer class="foot">
+    <button type="button" id="toggle" class="pill">START</button>
+    <p class="hint">Hold Ctrl to go full machine gun &middot; Ctrl + Alt + Q stops everything</p>
+  </footer>
+
+  <script src="panel.js"></script>
+</body>
+</html>

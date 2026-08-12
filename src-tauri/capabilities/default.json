@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Panel and overlay may listen to events and call the app commands.",
+  "windows": ["panel", "overlay"],
+  "permissions": ["core:default", "core:event:allow-emit-to"]
+}
