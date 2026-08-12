@@ -1,16 +1,20 @@
-//! Detects a foreground window that covers a whole monitor.
+//! Detects a foreground window that the overlay cannot draw over.
 //!
-//! The hand lives in an always-on-top overlay, but a full-screen window (a game, a
-//! video, the Snipping Tool overlay that PrintScreen opens) draws above it. With the
-//! real cursor hidden that would leave no pointer at all, so the app gives the plain
-//! cursor back for as long as such a window is in front.
+//! The overlay is always-on-top, so a window covering the whole monitor is not a
+//! problem by itself: a browser at F11 is not topmost, and the hand still paints over
+//! it. Only a window that is *also* topmost competes with us — the snipping overlay
+//! PrintScreen opens, or a game on exclusive full screen. With the real cursor hidden
+//! those would leave no pointer at all, so the app gives the plain cursor back for as
+//! long as one of them is in front.
 
-use windows::Win32::Foundation::{HWND, RECT};
+use windows::Win32::Foundation::HWND;
 use windows::Win32::Graphics::Gdi::{
     GetMonitorInfoW, MonitorFromWindow, MONITORINFO, MONITOR_DEFAULTTONEAREST,
 };
+use windows::Win32::System::Threading::GetCurrentProcessId;
 use windows::Win32::UI::WindowsAndMessaging::{
-    GetClassNameW, GetForegroundWindow, GetWindowRect,
+    GetClassNameW, GetForegroundWindow, GetWindowLongPtrW, GetWindowRect,
+    GetWindowThreadProcessId, GWL_EXSTYLE, WS_EX_TOPMOST,
 };
 
 /// The desktop itself always covers the monitor; it must not count as a cover-up.
@@ -22,17 +26,22 @@ fn class_name(window: HWND) -> String {
     String::from_utf16_lossy(&buffer[..length.max(0) as usize])
 }
 
-pub fn foreground_covers_monitor() -> bool {
+fn is_ours(window: HWND) -> bool {
+    let mut pid = 0u32;
     unsafe {
-        let window = GetForegroundWindow();
-        if window.is_invalid() {
-            return false;
-        }
-        if SHELL_CLASSES.contains(&class_name(window).as_str()) {
-            return false;
-        }
+        GetWindowThreadProcessId(window, Some(&mut pid));
+        pid == GetCurrentProcessId()
+    }
+}
 
-        let mut bounds = RECT::default();
+fn is_topmost(window: HWND) -> bool {
+    let style = unsafe { GetWindowLongPtrW(window, GWL_EXSTYLE) };
+    style & WS_EX_TOPMOST.0 as isize != 0
+}
+
+fn covers_its_monitor(window: HWND) -> bool {
+    unsafe {
+        let mut bounds = Default::default();
         if GetWindowRect(window, &mut bounds).is_err() {
             return false;
         }
@@ -52,4 +61,15 @@ pub fn foreground_covers_monitor() -> bool {
             && bounds.right >= screen.right
             && bounds.bottom >= screen.bottom
     }
+}
+
+pub fn foreground_blocks_overlay() -> bool {
+    let window = unsafe { GetForegroundWindow() };
+    if window.is_invalid() || is_ours(window) {
+        return false;
+    }
+    if SHELL_CLASSES.contains(&class_name(window).as_str()) {
+        return false;
+    }
+    is_topmost(window) && covers_its_monitor(window)
 }

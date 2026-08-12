@@ -82,9 +82,11 @@ pointer position comes from a global low-level mouse hook in Rust.
 ## Known limits
 
 - Windows only. The whole effect is built on Win32 APIs.
-- A full-screen window draws above the overlay, so while one is in the foreground the
-  app hands the plain cursor back rather than leave you with no pointer at all. That
-  covers games, full-screen video and the snipping overlay PrintScreen opens.
+- The hand keeps working in ordinary full screen — a browser at F11 is not a topmost
+  window, so the always-on-top overlay still paints over it. Only a window that is
+  *also* topmost can win, and there the app hands the plain cursor back rather than
+  leave you with no pointer at all: the snipping overlay PrintScreen opens, or a game
+  on exclusive full screen.
 - UAC prompts run on their own secure desktop, which neither the overlay nor the
   cursor replacement reaches: there you briefly get the plain system arrow back.
 - There is no desktop shake. It was built on `MagSetFullscreenTransform`, which the

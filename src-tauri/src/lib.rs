@@ -102,9 +102,8 @@ fn shut_down_effects() {
     cursor::restore();
 }
 
-/// Gives the plain cursor back while a full-screen window sits above the overlay,
-/// otherwise there would be no visible pointer at all in games or the PrintScreen
-/// snipping overlay.
+/// Gives the plain cursor back while a window the overlay cannot draw over is in
+/// front, otherwise there would be no visible pointer at all there.
 fn guard_visibility(app: AppHandle) {
     loop {
         std::thread::sleep(GUARD_INTERVAL);
@@ -114,15 +113,18 @@ fn guard_visibility(app: AppHandle) {
             continue;
         }
 
-        let covered = fullscreen::foreground_covers_monitor();
+        let covered = fullscreen::foreground_blocks_overlay();
         if covered == SUSPENDED.load(Ordering::Relaxed) {
             continue;
         }
-        SUSPENDED.store(covered, Ordering::Relaxed);
 
+        // Only record the new state once the switch actually happened, otherwise a
+        // missing window would desync the guard for good.
         let Some(overlay) = app.get_webview_window(OVERLAY) else {
             continue;
         };
+        SUSPENDED.store(covered, Ordering::Relaxed);
+
         if covered {
             cursor::restore();
             let _ = overlay.hide();
