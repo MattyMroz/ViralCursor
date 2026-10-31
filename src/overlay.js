@@ -3,6 +3,8 @@
    data arrives as Tauri events from the global mouse hook instead of DOM listeners. */
 
 (() => {
+	// biome-ignore lint/suspicious/noRedundantUseStrict: loaded as a classic <script>, not a module
+	"use strict";
 	const { listen } = window.__TAURI__.event;
 
 	const root = document.documentElement;

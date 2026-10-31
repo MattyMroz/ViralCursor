@@ -1,4 +1,6 @@
 (() => {
+	// biome-ignore lint/suspicious/noRedundantUseStrict: loaded as a classic <script>, not a module
+	"use strict";
 	const { invoke } = window.__TAURI__.core;
 	const { emitTo, listen } = window.__TAURI__.event;
 
