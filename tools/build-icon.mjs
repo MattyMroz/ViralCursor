@@ -14,16 +14,19 @@ if (!match) throw new Error("hero-pointer svg not found in reference demo");
 
 // The hand occupies y 0..215 of a 159x1494 viewBox; pad it out to a square canvas.
 const svg = match[0]
-  .replace(/ data-astro-cid-ge2uvauf/g, "")
-  .replace(/width="44"/, 'width="1024"')
-  .replace(/height="414"/, 'height="1024"')
-  .replace(/viewBox="0 0 159 1494"/, 'viewBox="-38.5 -12 236 236"');
+	.replace(/ data-astro-cid-ge2uvauf/g, "")
+	.replace(/width="44"/, 'width="1024"')
+	.replace(/height="414"/, 'height="1024"')
+	.replace(/viewBox="0 0 159 1494"/, 'viewBox="-38.5 -12 236 236"');
 
 writeFileSync(join(root, "icon.svg"), svg);
 
 await sharp(Buffer.from(svg), { density: 384 })
-  .resize(1024, 1024, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
-  .png()
-  .toFile(join(root, "icon.png"));
+	.resize(1024, 1024, {
+		fit: "contain",
+		background: { r: 0, g: 0, b: 0, alpha: 0 },
+	})
+	.png()
+	.toFile(join(root, "icon.png"));
 
 console.log("wrote icon.svg + icon.png");

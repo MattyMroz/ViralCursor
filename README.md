@@ -26,13 +26,13 @@ Ctrl is the trigger for the loud part.
 
 ## Controls
 
-| Setting | Range | Default |
-|---|---|---|
+| Setting     | Range            | Default |
+| ----------- | ---------------- | ------- |
 | Click speed | 3.8 – 25 pokes/s | 10.9 /s |
-| Arm length | 30 – 250 % | 100 % |
-| Hand size | 50 – 220 % | 100 % |
-| Opacity | 15 – 100 % | 100 % |
-| Impact size | 50 – 200 % | 100 % |
+| Arm length  | 30 – 250 %       | 100 %   |
+| Hand size   | 50 – 220 %       | 100 %   |
+| Opacity     | 15 – 100 %       | 100 %   |
+| Impact size | 50 – 200 %       | 100 %   |
 
 **Ctrl + Alt + Q** stops everything and gives the normal cursor back. It works even if
 the window is buried, which matters: hiding the cursor is a system-wide change.
@@ -55,15 +55,15 @@ bun tools/build-icon.mjs && bunx tauri icon icon.png
 
 ## How it works
 
-| Piece | Where |
-|---|---|
-| Hand + flash SVG, keyframes | `src/overlay.css`, `src/overlay.html` |
-| Poke escalation, machine gun | `src/overlay.js` |
-| Control panel | `src/index.html`, `src/panel.js` |
-| Hiding the real cursor | `src-tauri/src/cursor.rs` (`SetSystemCursor`) |
+| Piece                           | Where                                                     |
+| ------------------------------- | --------------------------------------------------------- |
+| Hand + flash SVG, keyframes     | `src/overlay.css`, `src/overlay.html`                     |
+| Poke escalation, machine gun    | `src/overlay.js`                                          |
+| Control panel                   | `src/index.html`, `src/panel.js`                          |
+| Hiding the real cursor          | `src-tauri/src/cursor.rs` (`SetSystemCursor`)             |
 | Mouse + Ctrl feed, panic hotkey | `src-tauri/src/hook.rs` (`WH_MOUSE_LL`, `WH_KEYBOARD_LL`) |
-| Full-screen fallback | `src-tauri/src/fullscreen.rs` |
-| Overlay window, wiring | `src-tauri/src/lib.rs` |
+| Full-screen fallback            | `src-tauri/src/fullscreen.rs`                             |
+| Overlay window, wiring          | `src-tauri/src/lib.rs`                                    |
 
 `src/overlay.html` is generated — do not edit it by hand. It is assembled from
 `reference/pokey_cursor_fast_hold_fx_shake.html` so the SVG art cannot drift from the
