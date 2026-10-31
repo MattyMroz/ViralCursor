@@ -32,6 +32,8 @@ repos:
     hooks:
       # Fixes the file, then fails the commit. Run `git add` and commit again.
       - id: trailing-whitespace
+        # Two trailing spaces are a hard line break in Markdown.
+        args: [--markdown-linebreak-ext=md]
       - id: end-of-file-fixer
       - id: mixed-line-ending
         args: [--fix=lf]
@@ -58,9 +60,14 @@ repos:
   - repo: https://github.com/crate-ci/typos
     rev: v1.49.0
     hooks:
-      # Fixes typos on its own. Its dictionary is English only.
+      # Reports only: its dictionary is English, and with the default
+      # --write-changes it rewrote Polish words into English ones.
+      # Count its findings on main first: Polish words in code are findings
+      # too, and a hook with a backlog blocks every commit. Keep it only at
+      # zero; a later false positive goes to _typos.toml [default.extend-words].
       - id: typos
-        exclude: \.md$
+        args: [--force-exclude]
+        types_or: [python, pyi, javascript, jsx, ts, tsx, rust, shell]
 
   # Replaces every hand-written commit validator. Fill in --scopes.
   # It rejects `Revert "..."`, which git writes itself. After git revert,
@@ -72,7 +79,7 @@ repos:
         stages: [commit-msg]
         args:
           - --force-scope
-          - --scopes=panel,guard,repo
+          - --scopes=docs,panel,guard,repo
           - feat
           - fix
           - chore
