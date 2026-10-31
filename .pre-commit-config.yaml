@@ -51,12 +51,6 @@ repos:
       - id: forbid-submodules
       - id: destroyed-symlinks
 
-  - repo: https://github.com/pre-commit/pygrep-hooks
-    rev: v1.10.0
-    hooks:
-      # U+FFFD is what a botched encoding leaves behind.
-      - id: text-unicode-replacement-char
-
   - repo: https://github.com/crate-ci/typos
     rev: v1.49.0
     hooks:
@@ -96,8 +90,10 @@ repos:
 # Scope lives in the published hook definitions; do not repeat files/types here.
 
   - repo: https://github.com/MattyMroz/agents
-    rev: hooks-v1.1.0 # or newer: prek autoupdate
+    rev: hooks-v1.2.0 # or newer: prek autoupdate
     hooks:
+      # U+FFFD is what a botched encoding leaves behind.
+      - id: no-replacement-char
       - id: no-test-prose
       # Commit body: summary + Validation block bound to recorded runs.
       # Format and the mm-validate workflow: presets/hooks/references/commit-message.md
